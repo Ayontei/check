@@ -1,0 +1,27 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-json
+      - id: check-merge-conflict
+      - id: detect-private-key
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.2  # проверьте актуальную версию на https://github.com/astral-sh/ruff-pre-commit/releases
+    hooks:
+      - id: ruff
+        args: [--fix]  # автоисправление где возможно
+      # Форматтер — аналог black (если хочешь использовать вместо black)
+      - id: ruff-format
+
+  # ----- НОВОЕ: Статическая типизация MYPY -----
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.19.1  # проверьте актуальную версию
+    hooks:
+      - id: mypy
+        args: [--ignore-missing-imports, --follow-imports=skip]
+        exclude: "migrations"
+        additional_dependencies: [types-requests, types-pytz]  # заглушки для библиотек
