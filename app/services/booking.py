@@ -11,7 +11,8 @@ from app.repositories.base import BaseRepository
 from app.repositories.booking import BookingRepository
 from app.repositories.user import UserRepository
 from app.schemas.booking import BookingCreate
-
+from app.tasks.booking_tasks import expire_pending_booking
+from app.tasks.booking_tasks import send_booking_reminder
 
 class BookingService:
     def __init__(self, db: Session):
@@ -64,8 +65,6 @@ class BookingService:
         redis_client.delete(f"booking:{booking.id}")
         redis_client.delete(f"room_availability:{booking.room_id}")
 
-        # Celery: планируем авто-истечение через N минут
-        from app.tasks.booking_tasks import expire_pending_booking
 
         expire_pending_booking.apply_async(
             args=[booking.id], countdown=self.settings.BOOKING_EXPIRE_MINUTES * 60
@@ -105,8 +104,6 @@ class BookingService:
         redis_client.delete(f"booking:{booking.id}")
         redis_client.delete(f"room_availability:{booking.room_id}")
 
-        # Celery: планируем напоминание за M минут до start_at
-        from app.tasks.booking_tasks import send_booking_reminder
 
         reminder_at = booking.start_at - timedelta(
             minutes=self.settings.BOOKING_REMINDER_MINUTES
