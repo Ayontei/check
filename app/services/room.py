@@ -9,8 +9,8 @@ from app.core.cache import invalidate_availability_cache, invalidate_rooms_cache
 from app.core.config import get_settings
 from app.core.redis_client import redis_client
 from app.models.room import Room
+from app.repositories.base import BaseRepository
 from app.repositories.booking import BookingRepository
-from app.repositories.room import RoomRepository
 from app.schemas.room import RoomCreate, RoomUpdate
 
 
@@ -39,7 +39,7 @@ def _room_to_cache_dict(room: Room) -> dict[str, Any]:
 class RoomService:
     def __init__(self, db: Session):
         self.db = db
-        self.room_repo = RoomRepository(db)
+        self.room_repo = BaseRepository(Room, db)
         self.booking_repo = BookingRepository(db)
         self.settings = get_settings()
 

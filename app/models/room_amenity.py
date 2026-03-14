@@ -1,16 +1,20 @@
-from sqlalchemy import Column, ForeignKey, Integer, Table
+from sqlalchemy import Column, ForeignKey, Integer
 
-from app.models.base import Base
+from .base import Base
 
-room_amenities = Table(
-    "room_amenities",
-    Base.metadata,
-    Column("room_id", Integer, ForeignKey("rooms.id", ondelete="CASCADE"), primary_key=True),
-    Column(
-        "amenity_id",
+
+class RoomAmenity(Base):
+    """Ассоциативная таблица many-to-many Room <-> Amenity."""
+
+    __tablename__ = "room_amenities"
+
+    room_id = Column(
+        Integer,
+        ForeignKey("rooms.id", ondelete="CASCADE"),
+        primary_key=True,
+    )
+    amenity_id = Column(
         Integer,
         ForeignKey("amenities.id", ondelete="CASCADE"),
         primary_key=True,
-    ),
-)
-
+    )

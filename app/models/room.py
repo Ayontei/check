@@ -2,7 +2,7 @@ from sqlalchemy import Boolean, Column, Integer, String
 from sqlalchemy.orm import relationship
 
 from .base import Base, TimestampMixin
-from .room_amenity import room_amenities
+from .room_amenity import RoomAmenity
 
 
 class Room(Base, TimestampMixin):
@@ -16,7 +16,8 @@ class Room(Base, TimestampMixin):
 
     amenities = relationship(
         "Amenity",
-        secondary=room_amenities,
+        secondary=RoomAmenity.__table__,
         back_populates="rooms",
         lazy="selectin",
     )
+    bookings = relationship("Booking", back_populates="room", lazy="selectin")

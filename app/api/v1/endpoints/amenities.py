@@ -18,10 +18,7 @@ def create_amenity(
     service: AmenityService = Depends(get_amenity_service),
     _admin=Depends(require_admin),
 ):
-    try:
-        return service.create(payload)
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    return service.create(payload)
 
 
 @router.patch("/{amenity_id}", response_model=AmenityResponse)
@@ -31,12 +28,9 @@ def update_amenity(
     service: AmenityService = Depends(get_amenity_service),
     _admin=Depends(require_admin),
 ):
-    try:
-        amenity = service.update(amenity_id, payload)
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    amenity = service.update(amenity_id, payload)
     if not amenity:
-        raise HTTPException(status_code=404, detail="Amenity not found")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Amenity not found")
     return amenity
 
 
@@ -48,6 +42,6 @@ def delete_amenity(
 ):
     ok = service.delete(amenity_id)
     if not ok:
-        raise HTTPException(status_code=404, detail="Amenity not found")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Amenity not found")
     return None
 

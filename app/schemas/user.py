@@ -1,6 +1,6 @@
-from pydantic import BaseModel, ConfigDict, EmailStr
 from datetime import datetime
-from typing import Optional
+
+from pydantic import BaseModel, ConfigDict, EmailStr
 
 
 # База с общими полями
@@ -17,10 +17,10 @@ class UserCreate(UserBase):
 
 # Что присылает клиент при обновлении (все поля опциональны)
 class UserUpdate(BaseModel):
-    email: Optional[EmailStr] = None
-    password: Optional[str] = None
-    is_active: Optional[bool] = None
-    is_admin: Optional[bool] = None
+    email: EmailStr | None = None
+    password: str | None = None
+    is_active: bool | None = None
+    is_admin: bool | None = None
 
 
 # Что возвращаем клиенту (без пароля!)

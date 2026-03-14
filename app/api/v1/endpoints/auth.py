@@ -22,14 +22,14 @@ def register(
         user = user_service.create_user(user_data)
         return user
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 
 @router.post("/login", response_model=TokenPair)
 def login(payload: LoginRequest, user_service: UserService = Depends(get_user_service)):
     user = user_service.authenticate_user(payload.email, payload.password)
     if not user:
-        raise HTTPException(status_code=400, detail="Invalid credentials")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid credentials")
 
     settings = get_settings()
     access = create_token(
@@ -52,7 +52,7 @@ def refresh(payload: RefreshRequest):
         validate_token_type(token_payload, "refresh")
         user_id = str(token_payload.get("sub"))
     except Exception:
-        raise HTTPException(status_code=401, detail="Invalid refresh token")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid refresh token")
 
     settings = get_settings()
     access = create_token(

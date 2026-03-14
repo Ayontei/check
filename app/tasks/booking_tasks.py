@@ -55,13 +55,14 @@ def send_booking_reminder(booking_id: int):
     """
     db = SessionLocal()
     try:
+        from app.models.room import Room
+        from app.repositories.base import BaseRepository
         from app.repositories.booking import BookingRepository
         from app.repositories.user import UserRepository
-        from app.repositories.room import RoomRepository
 
         booking_repo = BookingRepository(db)
         user_repo = UserRepository(db)
-        room_repo = RoomRepository(db)
+        room_repo = BaseRepository(Room, db)
 
         booking = booking_repo.get(booking_id)
         if not booking:

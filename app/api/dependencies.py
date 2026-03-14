@@ -35,22 +35,22 @@ def get_current_user(
     user_service: UserService = Depends(get_user_service),
 ):
     if credentials is None:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Not authenticated")
     token = credentials.credentials
     try:
         payload = decode_token(token)
         validate_token_type(payload, "access")
         user_id = int(payload.get("sub"))
     except Exception:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid token")
 
     user = user_service.get_user_by_id(user_id)
     if not user or not user.is_active:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Inactive user")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Inactive user")
     return user
 
 
 def require_admin(user=Depends(get_current_user)):
     if not getattr(user, "is_admin", False):
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin only")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Admin only")
     return user

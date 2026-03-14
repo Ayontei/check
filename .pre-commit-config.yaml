@@ -23,5 +23,5 @@ repos:
     hooks:
       - id: mypy
         args: [--ignore-missing-imports, --follow-imports=skip]
-        exclude: "migrations"
+        exclude: "^alembic/versions/"
         additional_dependencies: [types-requests, types-pytz]  # заглушки для библиотек

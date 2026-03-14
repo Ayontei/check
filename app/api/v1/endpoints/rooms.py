@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
@@ -20,12 +19,12 @@ def availability(
     start_at: datetime = Query(..., description="Начало интервала (ISO 8601)"),
     end_at: datetime = Query(..., description="Конец интервала (ISO 8601)"),
     capacity_min: int | None = Query(None, description="Минимальная вместимость"),
-    amenity_ids: List[int] | None = Query(None, description="ID удобств (комната должна содержать все)"),
+    amenity_ids: list[int] | None = Query(None, description="ID удобств (комната должна содержать все)"),
     floor: int | None = Query(None, description="Этаж"),
     service: RoomService = Depends(get_room_service),
 ):
     if end_at <= start_at:
-        raise HTTPException(status_code=400, detail="Invalid interval")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid interval")
     return service.availability(
         start_at, end_at,
         capacity_min=capacity_min,
@@ -38,7 +37,7 @@ def availability(
 def get_room(room_id: int, service: RoomService = Depends(get_room_service)):
     room = service.get(room_id)
     if not room or not room.is_active:
-        raise HTTPException(status_code=404, detail="Room not found")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Room not found")
     return room
 
 
@@ -60,7 +59,7 @@ def update_room(
 ):
     room = service.update(room_id, payload)
     if not room:
-        raise HTTPException(status_code=404, detail="Room not found")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Room not found")
     return room
 
 
@@ -72,6 +71,6 @@ def deactivate_room(
 ):
     room = service.deactivate(room_id)
     if not room:
-        raise HTTPException(status_code=404, detail="Room not found")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Room not found")
     return room
 

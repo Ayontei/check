@@ -1,3 +1,4 @@
+from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.models.amenity import Amenity
@@ -16,7 +17,10 @@ class AmenityService:
     def create(self, data: AmenityCreate) -> Amenity:
         existing = self.repo.get_by_slug(data.slug)
         if existing:
-            raise ValueError("Slug already exists")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Slug already exists",
+            )
         return self.repo.create(**data.model_dump())
 
     def update(self, amenity_id: int, data: AmenityUpdate) -> Amenity | None:
@@ -24,7 +28,10 @@ class AmenityService:
         if "slug" in update:
             other = self.repo.get_by_slug(update["slug"])
             if other and other.id != amenity_id:
-                raise ValueError("Slug already exists")
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Slug already exists",
+                )
         return self.repo.update(amenity_id, **update)
 
     def delete(self, amenity_id: int) -> bool:

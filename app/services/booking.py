@@ -6,8 +6,9 @@ from app.core.config import get_settings
 from app.core.redis_client import redis_client
 from app.models.booking import Booking
 from app.models.enums import BookingStatus
+from app.models.room import Room
+from app.repositories.base import BaseRepository
 from app.repositories.booking import BookingRepository
-from app.repositories.room import RoomRepository
 from app.repositories.user import UserRepository
 from app.schemas.booking import BookingCreate
 
@@ -16,7 +17,7 @@ class BookingService:
     def __init__(self, db: Session):
         self.db = db
         self.repo = BookingRepository(db)
-        self.room_repo = RoomRepository(db)
+        self.room_repo = BaseRepository(Room, db)
         self.user_repo = UserRepository(db)
         self.settings = get_settings()
 

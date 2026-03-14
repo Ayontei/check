@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
 
 from .base import Base
-from .room_amenity import room_amenities
+from .room_amenity import RoomAmenity
 
 
 class Amenity(Base):
@@ -14,7 +14,7 @@ class Amenity(Base):
 
     rooms = relationship(
         "Room",
-        secondary=room_amenities,
+        secondary=RoomAmenity.__table__,
         back_populates="amenities",
         lazy="selectin",
     )

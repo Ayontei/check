@@ -1,5 +1,4 @@
 from pydantic import BaseModel, ConfigDict
-from typing import Optional
 
 
 class AmenityBase(BaseModel):
@@ -12,8 +11,8 @@ class AmenityCreate(AmenityBase):
 
 
 class AmenityUpdate(BaseModel):
-    name: Optional[str] = None
-    slug: Optional[str] = None
+    name: str | None = None
+    slug: str | None = None
 
 
 class AmenityResponse(AmenityBase):

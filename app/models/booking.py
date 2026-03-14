@@ -15,6 +15,5 @@ class Booking(Base, TimestampMixin):
     status = Column(String, nullable=False, default=BookingStatus.PENDING.value)
     purpose = Column(String, nullable=False)
 
-    # Связи (relationships) — опционально, для удобства
-    room = relationship("Room", backref="bookings")
-    user = relationship("User", backref="bookings")
+    room = relationship("Room", back_populates="bookings", lazy="selectin")
+    user = relationship("User", back_populates="bookings", lazy="selectin")

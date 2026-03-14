@@ -1,5 +1,8 @@
-from typing import Generic, TypeVar, Type, Optional, List
+from typing import Generic, TypeVar, Type
+
+from sqlalchemy import select
 from sqlalchemy.orm import Session
+
 from app.models.base import Base
 
 ModelType = TypeVar("ModelType", bound=Base)
@@ -12,13 +15,14 @@ class BaseRepository(Generic[ModelType]):
         self.model = model
         self.db = db
 
-    def get(self, id: int) -> Optional[ModelType]:
+    def get(self, id: int) -> ModelType | None:
         """Получить запись по ID"""
-        return self.db.query(self.model).filter(self.model.id == id).first()
+        return self.db.get(self.model, id)
 
-    def get_all(self, skip: int = 0, limit: int = 100) -> List[ModelType]:
+    def get_all(self, skip: int = 0, limit: int = 100) -> list[ModelType]:
         """Получить все записи с пагинацией"""
-        return self.db.query(self.model).offset(skip).limit(limit).all()
+        stmt = select(self.model).offset(skip).limit(limit)
+        return list(self.db.scalars(stmt).all())
 
     def create(self, **kwargs) -> ModelType:
         """Создать новую запись"""
@@ -28,7 +32,7 @@ class BaseRepository(Generic[ModelType]):
         self.db.refresh(obj)
         return obj
 
-    def update(self, id: int, **kwargs) -> Optional[ModelType]:
+    def update(self, id: int, **kwargs) -> ModelType | None:
         """Обновить запись"""
         obj = self.get(id)
         if obj:
@@ -47,10 +51,10 @@ class BaseRepository(Generic[ModelType]):
             return True
         return False
 
-    def filter(self, **filters) -> List[ModelType]:
+    def filter(self, **filters) -> list[ModelType]:
         """Фильтрация записей"""
-        query = self.db.query(self.model)
+        stmt = select(self.model)
         for key, value in filters.items():
             if hasattr(self.model, key):
-                query = query.filter(getattr(self.model, key) == value)
-        return query.all()
+                stmt = stmt.where(getattr(self.model, key) == value)
+        return list(self.db.scalars(stmt).all())

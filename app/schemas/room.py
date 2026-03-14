@@ -1,6 +1,6 @@
-from pydantic import BaseModel, ConfigDict
 from datetime import datetime
-from typing import Optional
+
+from pydantic import BaseModel, ConfigDict
 
 
 class RoomBase(BaseModel):
@@ -15,10 +15,10 @@ class RoomCreate(RoomBase):
 
 
 class RoomUpdate(BaseModel):
-    name: Optional[str] = None
-    floor: Optional[int] = None
-    capacity: Optional[str] = None
-    is_active: Optional[bool] = None
+    name: str | None = None
+    floor: int | None = None
+    capacity: str | None = None
+    is_active: bool | None = None
 
 
 class RoomResponse(RoomBase):

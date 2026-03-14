@@ -1,6 +1,6 @@
-from pydantic import BaseModel, ConfigDict
 from datetime import datetime
-from typing import Optional
+
+from pydantic import BaseModel, ConfigDict
 
 from app.models.enums import BookingStatus
 
@@ -22,12 +22,12 @@ class BookingCreate(BaseModel):
 
 
 class BookingUpdate(BaseModel):
-    room_id: Optional[int] = None
-    user_id: Optional[int] = None
-    start_at: Optional[datetime] = None
-    end_at: Optional[datetime] = None
-    status: Optional[BookingStatus] = None
-    purpose: Optional[str] = None
+    room_id: int | None = None
+    user_id: int | None = None
+    start_at: datetime | None = None
+    end_at: datetime | None = None
+    status: BookingStatus | None = None
+    purpose: str | None = None
 
 
 class BookingResponse(BookingBase):
